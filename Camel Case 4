@@ -1,0 +1,123 @@
+#include <iostream>
+#include <sstream>
+#include <vector>
+#include <algorithm>
+#include <cctype>
+
+using namespace std;
+
+// Function to split a class name into separate words and convert to lowercase with spaces
+void SplitClass(const string &input) {
+    string result;
+    for (char c : input) {
+        if (isupper(c)) {
+            result += " ";  // add space before uppercase letter
+            result += tolower(c);  // convert uppercase to lowercase
+        } else {
+            result += c;
+        }
+    }
+    cout << result << endl;
+}
+
+// Function to split method or variable names into words and convert to lowercase with spaces
+void SplitMethodAndVariable(const string &input) {
+    string result;
+    for (char c : input) {
+        if (isupper(c)) {
+            result += " ";  // add space before uppercase letter
+            result += tolower(c);  // convert uppercase to lowercase
+        } else {
+            result += c;
+        }
+    }
+    cout << result << endl;
+}
+
+// Function to combine words into camel case for a class name (capitalize first letter)
+void CombineClass(const string &input) {
+    string result;
+    bool firstChar = true;
+    for (char c : input) {
+        if (isspace(c)) {
+            continue;
+        }
+        if (firstChar) {
+            result += toupper(c);  // capitalize first letter
+            firstChar = false;
+        } else {
+            result += c;
+        }
+    }
+    cout << result << endl;
+}
+
+// Function to combine words into camel case for a method or variable (lowercase first letter)
+void CombineMethodAndVariable(const string &input, const string &type) {
+    string result;
+    bool firstChar = true;
+    for (char c : input) {
+        if (isspace(c)) {
+            continue;
+        }
+        if (firstChar) {
+            result += tolower(c);  // lowercase the first letter
+            firstChar = false;
+        } else {
+            result += c;
+        }
+    }
+    if (type == "M") {
+        result += "()";  // append parentheses for methods
+    }
+    cout << result << endl;
+}
+
+// Main function to handle input and perform the required operations
+void camelCase(string a) {
+    // split the input by ';'
+    stringstream ss(a);
+    string operation, type, input;
+    getline(ss, operation, ';');
+    getline(ss, type, ';');
+    getline(ss, input);
+    
+    // Trim any extra spaces from operation, type, and input
+    operation = operation.substr(0, operation.find_first_not_of(" \t"));
+    type = type.substr(0, type.find_first_not_of(" \t"));
+    input = input.substr(0, input.find_first_not_of(" \t"));
+
+    // Handle Split and Combine operations
+    if (operation == "S") {
+        if (type == "M" || type == "V") {
+            SplitMethodAndVariable(input);  // split method or variable
+        } else if (type == "C") {
+            SplitClass(input);  // split class
+        }
+    } else if (operation == "C") {
+        if (type == "M" || type == "V") {
+            CombineMethodAndVariable(input, type);  // combine method or variable
+        } else if (type == "C") {
+            CombineClass(input);  // combine class
+        }
+    }
+}
+
+int main() {
+    string line;
+    vector<string> input;
+    
+    // Read all input lines
+    while (getline(cin, line)) {
+        if (!line.empty()) {
+            input.push_back(line);
+        }
+    }
+    
+    // Process each line
+    for (const string &item : input) {
+        camelCase(item);
+    }
+
+    return 0;
+}
